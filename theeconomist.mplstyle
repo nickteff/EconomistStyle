@@ -1,0 +1,50 @@
+
+axes.prop_cycle                    : cycler('color', ['009FD7',  'E30010', '528EA5',  'f39200', '004C64', 'E84932',  '74BCBF',  'fed630', '75D0F4',  'EBA289'])
+axes.grid                          : True
+axes.grid.axis                     : y
+axes.grid.which                    : major
+lines.linewidth                    : 1.75
+lines.markersize                   : 9
+grid.alpha                         : 0.5
+axes.labelcolor                    : 525254
+axes.spines.left                   : False
+axes.spines.bottom                 : True
+axes.spines.top                    : False
+axes.spines.right                  : False
+axes.unicode_minus                 : False
+figure.titleweight                 : bold
+legend.fontsize                    : medium
+legend.markerscale                 : 1.5
+legend.frameon                     : False
+xtick.top                          : False   # draw ticks on the top side
+xtick.bottom                       : True   # draw ticks on the bottom side
+ytick.left                         : False   # draw ticks on the left side
+ytick.right                        : False  # draw ticks on the right side
+ytick.color                        : k
+font.family                        : Gill Sans MT
+
+
+patch.linewidth                    : .25
+patch.edgecolor                    : C4
+patch.force_edgecolor              : True
+patch.facecolor                    : C8
+boxplot.showmeans                  : True
+boxplot.whiskers                   : 2
+boxplot.showfliers                 : True
+boxplot.meanline                   : True
+boxplot.flierprops.color           : C4
+boxplot.flierprops.markerfacecolor : C8
+boxplot.flierprops.markeredgecolor : C4
+boxplot.flierprops.markersize      : 6.0
+boxplot.flierprops.linewidth       : 6.0
+boxplot.boxprops.color             : C4
+boxplot.boxprops.linewidth         : 1.25
+boxplot.whiskerprops.color         : C4
+boxplot.whiskerprops.linewidth     : 1.25
+boxplot.capprops.color             : C4
+boxplot.capprops.linewidth         : 1.25
+boxplot.medianprops.color          : C4
+boxplot.medianprops.linewidth      : 1.25
+boxplot.meanprops.color            :C4
+boxplot.meanprops.linestyle        : --
+boxplot.meanprops.linewidth        :  1.25
