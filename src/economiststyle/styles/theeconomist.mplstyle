@@ -1,3 +1,13 @@
+# The Economist — a Matplotlib style sheet
+#
+# Font note: Gill Sans MT is proprietary (it ships with Microsoft Office) and
+# cannot be redistributed, so it is listed first but the stack degrades to
+# freely-available humanist sans faces and finally to matplotlib's bundled
+# DejaVu Sans. `font.family` MUST stay `sans-serif` — naming a face directly
+# here would bypass the fallback list entirely and render the wrong typeface
+# on any machine that lacks it.
+font.family                        : sans-serif
+font.sans-serif                    : Gill Sans MT, Gill Sans, Lato, Fira Sans, Source Sans Pro, Open Sans, DejaVu Sans, sans-serif
 
 axes.prop_cycle                    : cycler('color', ['009FD7',  'E30010', '528EA5',  'f39200', '004C64', 'E84932',  '74BCBF',  'fed630', '75D0F4',  'EBA289'])
 axes.grid                          : True
@@ -12,17 +22,22 @@ axes.spines.bottom                 : True
 axes.spines.top                    : False
 axes.spines.right                  : False
 axes.unicode_minus                 : False
+axes.titlelocation                 : left
+axes.titleweight                   : bold
 figure.titleweight                 : bold
 legend.fontsize                    : medium
 legend.markerscale                 : 1.5
 legend.frameon                     : False
-xtick.top                          : False   # draw ticks on the top side
-xtick.bottom                       : True   # draw ticks on the bottom side
-ytick.left                         : False   # draw ticks on the left side
-ytick.right                        : False  # draw ticks on the right side
-ytick.color                        : k
-font.family                        : Gill Sans MT
 
+# Ticks: draw only along the bottom. The y ticks are switched off outright
+# rather than painted white, so the style survives a non-white figure face.
+xtick.top                          : False
+xtick.bottom                       : True
+xtick.direction                    : out
+ytick.left                         : False
+ytick.right                        : False
+ytick.color                        : 525254
+xtick.color                        : 525254
 
 patch.linewidth                    : .25
 patch.edgecolor                    : C4
@@ -45,6 +60,11 @@ boxplot.capprops.color             : C4
 boxplot.capprops.linewidth         : 1.25
 boxplot.medianprops.color          : C4
 boxplot.medianprops.linewidth      : 1.25
-boxplot.meanprops.color            :C4
+boxplot.meanprops.color            : C4
 boxplot.meanprops.linestyle        : --
-boxplot.meanprops.linewidth        :  1.25
+boxplot.meanprops.linewidth        : 1.25
+
+savefig.dpi                        : 150
+savefig.bbox                       : tight
+figure.facecolor                   : white
+savefig.facecolor                  : white
