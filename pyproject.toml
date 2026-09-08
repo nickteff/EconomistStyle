@@ -1,0 +1,64 @@
+[project]
+name = "economiststyle"
+version = "0.2.0"
+description = "An Economist-inspired Matplotlib style sheet, palette and chart furniture"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "Nick Teff" }]
+keywords = ["matplotlib", "style", "visualization", "charts", "economist"]
+classifiers = [
+    "Framework :: Matplotlib",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+
+# Floors are deliberately low. The style sheet and the public APIs this
+# package uses (get_named_colors_mapping, style.core.USER_LIBRARY_PATHS,
+# reload_library) have been stable well below these versions, and pinning to
+# whatever happened to resolve on the author's machine would lock out Colab
+# and every older environment for no benefit.
+dependencies = [
+    "matplotlib>=3.6",
+    "numpy>=1.23",
+    "pandas>=1.5",
+]
+
+[project.optional-dependencies]
+# Only the notebook's regression fit needs statsmodels; the style itself
+# does not, so it stays out of the default install.
+notebook = [
+    "statsmodels>=0.13",
+    "jupyter>=1.0",
+    "ipykernel>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/nteff/EconomistStyle"
+Source = "https://github.com/nteff/EconomistStyle"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "nbclient>=0.9",
+    "nbformat>=5.9",
+    "nbconvert>=7.0",
+    "statsmodels>=0.13",
+    "jupyter>=1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# This sweeps in styles/*.mplstyle and data/*.csv along with the modules;
+# adding a force-include for them would try to write each file twice and
+# fail the wheel build (an editable `uv sync` does not catch that).
+packages = ["src/economiststyle"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

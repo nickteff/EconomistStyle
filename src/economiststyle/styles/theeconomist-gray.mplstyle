@@ -1,0 +1,16 @@
+# The Economist — publication / grayscale overlay
+#
+# This is an OVERLAY, not a standalone style: it carries only the deltas from
+# `theeconomist` and is meant to be layered on top of it, which is what
+# `economiststyle.use("gray")` does:
+#
+#     plt.style.use(["theeconomist", "theeconomist-gray"])
+#
+# Keeping it delta-only means the spines, grid, ticks, boxplot and font rules
+# can never drift out of sync with the base style.
+#
+# The ramp is ordered darkest-first so a single-series chart reads near-black,
+# and the steps are spaced far enough apart to stay distinguishable in print
+# and in photocopy. For a deliberate accent, reach for the named colour
+# `economist:red` explicitly rather than relying on the cycler.
+axes.prop_cycle : cycler('color', ['1A1719', '808184', 'CBCCCE', '525254', 'ACADB0', 'E6E7E8'])
