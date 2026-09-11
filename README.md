@@ -83,6 +83,33 @@ the package:
 df = economiststyle.load_cpi_hdi()
 ```
 
+## The Altair theme
+
+An optional Vega-Lite theme, kept out of the base install and out of
+`economiststyle`'s own import-time registration since Altair is a separate
+dependency:
+
+```bash
+uv add "economiststyle[altair]"    # or: pip install "economiststyle[altair]"
+```
+
+```python
+import economiststyle.altair as economist_altair
+import altair as alt
+
+economist_altair.enable()          # or: economist_altair.enable("gray")
+
+alt.Chart(df).mark_line().encode(x="date:T", y="value:Q", color="country:N")
+```
+
+It reproduces the colour cycle, the y-only grid, the spineless axes, and the
+bold left-aligned title with a grey subtitle — everything a Vega-Lite
+`config` maps onto cleanly. It does not attempt the red corner tag:
+Vega-Lite has no drawing surface outside a view's own scales, so there is no
+equivalent of `fig.add_artist` to place it with.
+
+![Altair theme](gallery/timeseries-altair.png)
+
 ## A note on the font
 
 The Economist sets its charts in a face that isn't freely distributable, and
@@ -105,7 +132,7 @@ faces in the stack.
 
 ```bash
 uv sync
-uv run pytest                            # 31 tests
+uv run pytest                            # 41 tests
 uv run python examples/make_gallery.py   # regenerate gallery/
 ```
 

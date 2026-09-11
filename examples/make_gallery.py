@@ -160,6 +160,63 @@ def timeseries_chart(path: Path, *, variant: str = "default") -> None:
     economiststyle.use()
 
 
+def altair_timeseries_chart(path: Path, *, variant: str = "default") -> None:
+    """The Altair counterpart to ``timeseries_chart``.
+
+    Same simulated data and figure intent as the Matplotlib version, so the
+    two gallery images are a direct side-by-side check that the Vega-Lite
+    theme (``economiststyle.altair``) reproduces the Matplotlib style: same
+    colour cycle, y-only grid, spineless axes, bold left-aligned title with a
+    grey subtitle, legend banded above the plot. It does not attempt the red
+    corner tag — Vega-Lite has no drawing surface outside a view's own
+    scales, so that furniture stays Matplotlib-only for now.
+    """
+    import altair as alt
+    import pandas as pd
+
+    import economiststyle.altair as economist_altair
+
+    economist_altair.enable(variant)
+
+    rng = np.random.default_rng(0)
+    dates = np.arange("2016-01", "2026-01", dtype="datetime64[M]")
+    countries = ["Britain", "United States", "Germany", "Japan"]
+    df = pd.concat(
+        [
+            pd.DataFrame(
+                {
+                    "date": dates,
+                    "value": rng.normal(0.4, 1.6, dates.size).cumsum() + 100,
+                    "country": name,
+                }
+            )
+            for name in countries
+        ],
+        ignore_index=True,
+    )
+
+    label = "Grayscale variant" if variant in {"gray", "grey"} else "Default palette"
+    chart = (
+        alt.Chart(df)
+        .mark_line()
+        .encode(
+            x=alt.X("date:T", title=None),
+            y=alt.Y("value:Q", title="Index, 2016=100"),
+            # Sorted to the call order above rather than Altair's default
+            # alphabetical domain sort, matching how the Matplotlib version
+            # colours series in plot order.
+            color=alt.Color("country:N", title=None, sort=countries),
+        )
+        .properties(
+            title=alt.Title("Output per person", subtitle=label),
+            width=560,
+            height=320,
+        )
+    )
+    chart.save(path, scale_factor=2)
+    economist_altair.enable()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -175,6 +232,8 @@ def main() -> int:
         "palette.png": palette_chart,
         "timeseries.png": lambda p: timeseries_chart(p, variant="default"),
         "timeseries-gray.png": lambda p: timeseries_chart(p, variant="gray"),
+        "timeseries-altair.png": lambda p: altair_timeseries_chart(p, variant="default"),
+        "timeseries-altair-gray.png": lambda p: altair_timeseries_chart(p, variant="gray"),
     }
     for name, fn in charts.items():
         target = args.out / name
