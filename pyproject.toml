@@ -34,6 +34,13 @@ notebook = [
     "jupyter>=1.0",
     "ipykernel>=6.0",
 ]
+# economiststyle.altair is a separate, optional module (not imported by
+# economiststyle/__init__.py) so the base Matplotlib package never requires
+# Altair. 5.5 is the floor because that's when the public `alt.theme`
+# registry (as opposed to the deprecated `alt.themes`) shipped.
+altair = [
+    "altair>=5.5",
+]
 
 [project.urls]
 Homepage = "https://github.com/nteff/EconomistStyle"
@@ -47,6 +54,11 @@ dev = [
     "nbconvert>=7.0",
     "statsmodels>=0.13",
     "jupyter>=1.0",
+    "altair>=5.5",
+    # PNG export for the gallery script only; not needed to author Altair
+    # charts under the theme, which is why it's absent from the `altair`
+    # extra above.
+    "vl-convert-python>=1.0",
 ]
 
 [build-system]
