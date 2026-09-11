@@ -108,7 +108,9 @@ bold left-aligned title with a grey subtitle — everything a Vega-Lite
 Vega-Lite has no drawing surface outside a view's own scales, so there is no
 equivalent of `fig.add_artist` to place it with.
 
-![Altair theme](gallery/timeseries-altair.png)
+![The flagship chart, in Altair](gallery/corruption-altair.png)
+
+![Altair theme, multi-series](gallery/timeseries-altair.png)
 
 ## A note on the font
 

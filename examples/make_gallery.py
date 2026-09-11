@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import economiststyle
-from economiststyle import econ_title
+from economiststyle import ECONOMIST_RED, LABEL_GREY, econ_title
 
 OUT = Path(__file__).resolve().parent.parent / "gallery"
 
@@ -115,6 +115,101 @@ def corruption_chart(path: Path) -> None:
     )
     fig.savefig(path)
     plt.close(fig)
+
+
+def altair_corruption_chart(path: Path) -> None:
+    """The Altair counterpart to ``corruption_chart``.
+
+    Vega-Lite's own regression transform (``method="log"``) fits the same
+    HDI ~ log(CPI) model as the Matplotlib version's statsmodels OLS, so this
+    needs the R-squared from statsmodels only for the label text, not for the
+    line itself.
+    """
+    import altair as alt
+    import pandas as pd
+    import statsmodels.formula.api as smf
+
+    import economiststyle.altair as economist_altair
+
+    economist_altair.enable()
+
+    df = economiststyle.load_cpi_hdi()
+    named = economiststyle.named_colors()
+
+    model = smf.ols("HDI ~ Log_CPI", data=df).fit()
+    # R-squared is a proportion; see corruption_chart for why this isn't
+    # formatted as "{:.2f}%" (that would print "0.52%").
+    trend_label = f"R²={model.rsquared * 100:.0f}%"
+
+    # One shared colour scale across every layer, with a domain entry added
+    # for the trend line's R² label so it lands in the same legend as the
+    # region swatches instead of needing a second one.
+    domain = [*REGION_COLORS, trend_label]
+    color_range = [*(named[key] for key in REGION_COLORS.values()), ECONOMIST_RED]
+    color_scale = alt.Scale(domain=domain, range=color_range)
+
+    # Defined once and reused across layers: a layered chart resolves one
+    # shared scale, and an explicit domain on only some layers doesn't
+    # reliably win over the others' auto-detected one.
+    x = alt.X(
+        "CPI:Q",
+        title="Corruption Perceptions Index, 2011 (10=least corrupt)",
+        scale=alt.Scale(domain=[0.9, 10.3]),
+        axis=alt.Axis(titleFontStyle="italic", tickCount=10),
+    )
+    y = alt.Y(
+        "HDI:Q",
+        title="Human Development Index, 2011 (1=best)",
+        scale=alt.Scale(domain=[0.2, 1.0]),
+        axis=alt.Axis(titleFontStyle="italic"),
+    )
+
+    points = alt.Chart(df).mark_point(filled=False, size=110, strokeWidth=1.6).encode(
+        x=x, y=y, color=alt.Color("Region:N", scale=color_scale, title=None),
+    )
+
+    trend = (
+        alt.Chart(df)
+        .transform_regression("CPI", "HDI", method="log")
+        .mark_line(strokeWidth=1.75)
+        .encode(x=x, y=y, color=alt.value(ECONOMIST_RED))
+    )
+
+    # A colour legend has no way to add an entry for a value that isn't in
+    # the data, so this draws an otherwise invisible line (null x/y) whose
+    # only job is to put the R² label in the shared legend, next to the
+    # trend line's own colour.
+    trend_legend = (
+        alt.Chart(pd.DataFrame({"CPI": [None], "HDI": [None], "label": [trend_label]}))
+        .mark_line()
+        .encode(x=x, y=y, color=alt.Color("label:N", scale=color_scale, title=None))
+    )
+
+    labels_df = df[df["Country"].isin(POINTS_TO_LABEL)]
+    labels = (
+        alt.Chart(labels_df)
+        .mark_text(align="left", baseline="bottom", dx=4, dy=-4, fontSize=9, color="black")
+        .encode(x=x, y=y, text="Country:N")
+    )
+
+    scatter = alt.layer(points, trend, trend_legend, labels).properties(width=620, height=400)
+
+    # Vega-Lite has no "caption below the chart" config the way econ_title
+    # has a source line, so the nearest equivalent is a second, tiny view
+    # concatenated underneath, with the text pinned to its top-left corner.
+    source = (
+        alt.Chart(pd.DataFrame({
+            "text": ["Sources: Transparency International; UN Human Development Report"]
+        }))
+        .mark_text(align="left", baseline="top", fontSize=8.5, color=LABEL_GREY)
+        .encode(x=alt.value(0), y=alt.value(4), text="text:N")
+        .properties(width=620, height=16)
+    )
+
+    chart = alt.vconcat(scatter, source, spacing=6).properties(
+        title=alt.Title("Corruption and human development", anchor="start"),
+    )
+    chart.save(path, scale_factor=2)
 
 
 def palette_chart(path: Path) -> None:
@@ -229,6 +324,7 @@ def main() -> int:
 
     charts = {
         "corruption.png": corruption_chart,
+        "corruption-altair.png": altair_corruption_chart,
         "palette.png": palette_chart,
         "timeseries.png": lambda p: timeseries_chart(p, variant="default"),
         "timeseries-gray.png": lambda p: timeseries_chart(p, variant="gray"),
